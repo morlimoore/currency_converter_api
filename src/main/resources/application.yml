@@ -8,6 +8,9 @@ spring:
   profiles:
     active: dev
 
-server:
-  servlet:
-    context-path: "/api/v1"
+#server:
+#  servlet:
+#    context-path: "/api/v1"
+
+application.jwt.secretKey: jwtsecretkeyjwtsecretkey
+application.jwt.validityPeriod: 86400000
