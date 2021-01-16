@@ -1,5 +1,6 @@
 package com.morlimoore.currencyconverterapi.entities;
 
+import com.morlimoore.currencyconverterapi.util.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class User {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class User extends BaseEntity {
 
 	@Column(unique = true, nullable = false, length = 40)
 	private String email;
@@ -28,6 +25,7 @@ public class User {
 	@Column(nullable = false)
 	private String password;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Role role;
+	@Enumerated(EnumType.STRING)
+	@Column(length = 20, nullable = false)
+	private RoleEnum role;
 }
