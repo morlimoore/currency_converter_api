@@ -26,6 +26,6 @@ public class SignupRequestDTO {
     @Size(min = 6, max = 40)
     private String password;
 
-    @NotBlank(message="Role cannot be blank")
-    private String role;
+    @NotBlank(message = "Please provide a main currency")
+    private String mainCurrency;
 }
