@@ -24,7 +24,9 @@ import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 
 import static com.morlimoore.currencyconverterapi.util.CreateResponse.createResponse;
+import static com.morlimoore.currencyconverterapi.util.CreateResponse.successResponse;
 import static com.morlimoore.currencyconverterapi.util.RoleEnum.*;
+import static com.morlimoore.currencyconverterapi.util.WalletEnum.MAIN;
 import static org.springframework.http.HttpStatus.OK;
 
 @Service
@@ -66,13 +68,10 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
         Wallet wallet = new Wallet(signupRequestDTO.getMainCurrency());
         wallet.setUser(user);
-        wallet.setType("MAIN");
+        wallet.setType(MAIN);
         wallet.setAmount(0L);
         walletRepository.save(wallet);
-        ApiResponse<String> response = new ApiResponse<>();
-        response.setStatus(OK);
-        response.setMessage("User Registration Successful");
-        return createResponse(response);
+        return successResponse("User Registration Successful");
     }
 
     @Override

@@ -11,40 +11,34 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.morlimoore.currencyconverterapi.util.CreateResponse.bindingResultError;
+import static com.morlimoore.currencyconverterapi.util.CreateResponse.errorResponse;
 import static com.morlimoore.currencyconverterapi.util.CreateResponse.createResponse;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
 	@Autowired
-	AuthService authService;
+	private AuthService authService;
 
 	@PostMapping("/signin")
-	public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequestDTO loginRequestDTO, BindingResult result) {
+	public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequestDTO loginRequestDTO,
+									   BindingResult result) {
 		if (result.hasErrors())
-			return bindingResultError(result);
+			return errorResponse(result.getFieldError().getDefaultMessage());
 		return authService.authenticateUser(loginRequestDTO);
 	}
 
 	@PostMapping("/signup")
 	public ResponseEntity<ApiResponse<String>> registerUser(@Valid @RequestBody SignupRequestDTO signupRequestDTO, BindingResult result) {
 		if (result.hasErrors())
-			return bindingResultError(result);
-		else if (authService.ifUsernameExists(signupRequestDTO.getUsername())) {
-			ApiResponse<String> response = new ApiResponse<>();
-			response.setStatus(BAD_REQUEST);
-			response.setMessage("Username is already taken!");
-			return createResponse(response);
-		} else if (authService.ifEmailExists(signupRequestDTO.getEmail())) {
-			ApiResponse<String> response = new ApiResponse<>();
-			response.setStatus(BAD_REQUEST);
-			response.setMessage("Email address is already taken!");
-			return createResponse(response);
-		}
+			return errorResponse(result.getFieldError().getDefaultMessage());
+		else if (authService.ifUsernameExists(signupRequestDTO.getUsername()))
+			return errorResponse("Username is already taken!");
+		else if (authService.ifEmailExists(signupRequestDTO.getEmail()))
+			return errorResponse("Email address is already taken!");
+
 		// Create new user's account
 		return authService.createUserAccount(signupRequestDTO);
 	}
