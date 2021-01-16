@@ -12,5 +12,5 @@ public class ApiResponse<T> {
     private HttpStatus status;
     private String message;
     private LocalDateTime time = LocalDateTime.now();
-    private List<T> result;
+    private T result;
 }

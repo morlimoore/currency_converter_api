@@ -84,17 +84,17 @@ public class AuthServiceImpl implements AuthService {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
+        String role = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()).get(0);
         ApiResponse<JwtResponse> response = new ApiResponse<>();
         response.setStatus(OK);
         response.setMessage("Successful");
-        response.setResult(List.of(new JwtResponse(jwt,
+        response.setResult(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                roles)));
+                role));
         return createResponse(response);
     }
 }
