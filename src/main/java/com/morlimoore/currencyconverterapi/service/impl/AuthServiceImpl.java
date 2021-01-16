@@ -5,11 +5,12 @@ import com.morlimoore.currencyconverterapi.DTOs.SignupRequestDTO;
 import com.morlimoore.currencyconverterapi.entities.Role;
 import com.morlimoore.currencyconverterapi.entities.User;
 import com.morlimoore.currencyconverterapi.entities.UserDetailsImpl;
-import com.morlimoore.currencyconverterapi.exceptions.CustomException;
+import com.morlimoore.currencyconverterapi.entities.Wallet;
 import com.morlimoore.currencyconverterapi.payload.ApiResponse;
 import com.morlimoore.currencyconverterapi.payload.JwtResponse;
 import com.morlimoore.currencyconverterapi.repositories.RoleRepository;
 import com.morlimoore.currencyconverterapi.repositories.UserRepository;
+import com.morlimoore.currencyconverterapi.repositories.WalletRepository;
 import com.morlimoore.currencyconverterapi.security.JwtUtils;
 import com.morlimoore.currencyconverterapi.service.AuthService;
 import com.morlimoore.currencyconverterapi.util.RoleEnum;
@@ -46,6 +47,9 @@ public class AuthServiceImpl implements AuthService {
     UserRepository userRepository;
 
     @Autowired
+    WalletRepository walletRepository;
+
+    @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
@@ -69,6 +73,11 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new CustomException("Error: Role is not found.", HttpStatus.BAD_REQUEST));
         user.setRole(userRole);
         userRepository.save(user);
+        Wallet wallet = new Wallet(signupRequestDTO.getMainCurrency());
+        wallet.setUser(user);
+        wallet.setType("MAIN");
+        wallet.setAmount(0L);
+        walletRepository.save(wallet);
         ApiResponse<String> response = new ApiResponse<>();
         response.setStatus(OK);
         response.setMessage("User Registration Successful");
