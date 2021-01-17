@@ -7,8 +7,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class FixerApiResponse {
+public class CurrencyApiResponse {
 
-    private Boolean success;
-    private Map<String, String> symbols;
+    private Map<String, Map<String, String>> results;
 }

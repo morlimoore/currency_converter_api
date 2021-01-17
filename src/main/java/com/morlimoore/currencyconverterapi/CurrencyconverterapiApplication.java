@@ -14,7 +14,7 @@ public class CurrencyconverterapiApplication {
 		SpringApplication.run(CurrencyconverterapiApplication.class, args);
 	}
 
-	@Value("${application.fixerApi.baseUrl}")
+	@Value("${application.currencyApi.baseUrl}")
 	private String baseUrl;
 
 	@Bean
