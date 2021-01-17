@@ -1,10 +1,7 @@
 package com.morlimoore.currencyconverterapi.entities;
 
 import com.morlimoore.currencyconverterapi.util.RoleEnum;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -12,8 +9,7 @@ import javax.persistence.*;
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class User extends BaseEntity {
 
 	@Column(unique = true, nullable = false, length = 40)

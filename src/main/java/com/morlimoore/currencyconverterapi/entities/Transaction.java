@@ -1,9 +1,12 @@
 package com.morlimoore.currencyconverterapi.entities;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "transactions")
+@Data
 public class Transaction extends BaseEntity {
 
     @Column(nullable = false)

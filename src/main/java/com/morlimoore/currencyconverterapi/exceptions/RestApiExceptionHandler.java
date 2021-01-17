@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import static com.morlimoore.currencyconverterapi.util.CreateResponse.createResponse;
 
 @ControllerAdvice
-public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ AccessDeniedException.class })
     public ResponseEntity<ApiResponse> handleAccessDeniedException(Exception ex) {
@@ -27,7 +27,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler({ IllegalStateException.class })
     public ResponseEntity<ApiResponse> handleIllegalStateException(Exception ex) {
         ApiResponse response = new ApiResponse();
-        response.setMessage("An error occured. Please contact the API maintainer.");
+        response.setMessage("Transaction failed. Please try again later.");
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         return createResponse(response);
     }
