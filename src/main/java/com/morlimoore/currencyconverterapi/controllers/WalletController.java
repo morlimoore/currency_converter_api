@@ -1,7 +1,7 @@
 package com.morlimoore.currencyconverterapi.controllers;
 
 import com.morlimoore.currencyconverterapi.DTOs.CreateWalletDTO;
-import com.morlimoore.currencyconverterapi.DTOs.FundWalletDTO;
+import com.morlimoore.currencyconverterapi.DTOs.WalletTransactionDTO;
 import com.morlimoore.currencyconverterapi.entities.User;
 import com.morlimoore.currencyconverterapi.payload.ApiResponse;
 import com.morlimoore.currencyconverterapi.service.WalletService;
@@ -39,14 +39,14 @@ public class WalletController {
     }
 
     @PostMapping("/fund")
-    public ResponseEntity<ApiResponse<String>> fundWallet(@Valid @RequestBody FundWalletDTO fundWalletDTO,
+    public ResponseEntity<ApiResponse<String>> fundWallet(@Valid @RequestBody WalletTransactionDTO walletTransactionDTO,
                                                           BindingResult result) {
         if (result.hasErrors())
             return errorResponse(result.getFieldError().getDefaultMessage());
-        if (!walletService.isCurrencySupported(fundWalletDTO.getCurrency()))
+        if (!walletService.isCurrencySupported(walletTransactionDTO.getCurrency()))
             return errorResponse("Sorry, selected currency is not available, please select another.");
         User user = authUtil.getAuthenticatedUser();
-        return walletService.fundWallet(user, fundWalletDTO);
+        return walletService.fundWallet(user, walletTransactionDTO);
     }
 
 //    @GetMapping("/currencies")

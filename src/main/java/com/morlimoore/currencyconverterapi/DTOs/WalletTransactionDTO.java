@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class FundWalletDTO {
+public class WalletTransactionDTO {
 
     @NotBlank(message = "Please provide a currency code")
     @Size(max = 3)

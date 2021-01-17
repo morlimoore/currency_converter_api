@@ -1,6 +1,6 @@
 package com.morlimoore.currencyconverterapi.service.impl;
 
-import com.morlimoore.currencyconverterapi.DTOs.FundWalletDTO;
+import com.morlimoore.currencyconverterapi.DTOs.WalletTransactionDTO;
 import com.morlimoore.currencyconverterapi.entities.User;
 import com.morlimoore.currencyconverterapi.payload.ApiResponse;
 import com.morlimoore.currencyconverterapi.service.AdminService;
@@ -20,8 +20,8 @@ public class AdminServiceImpl implements AdminService {
     private WalletService walletService;
 
     @Override
-    public ResponseEntity<ApiResponse<String>> fundUserWallet(Long userId, FundWalletDTO fundWalletDTO) {
+    public ResponseEntity<ApiResponse<String>> fundUserWallet(Long userId, WalletTransactionDTO walletTransactionDTO) {
         User user = userService.findUserById(userId);
-        return walletService.fundWallet(user, fundWalletDTO);
+        return walletService.fundWallet(user, walletTransactionDTO);
     }
 }

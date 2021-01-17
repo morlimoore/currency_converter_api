@@ -1,6 +1,6 @@
 package com.morlimoore.currencyconverterapi.controllers;
 
-import com.morlimoore.currencyconverterapi.DTOs.FundWalletDTO;
+import com.morlimoore.currencyconverterapi.DTOs.WalletTransactionDTO;
 import com.morlimoore.currencyconverterapi.exceptions.CustomException;
 import com.morlimoore.currencyconverterapi.payload.ApiResponse;
 import com.morlimoore.currencyconverterapi.service.AdminService;
@@ -26,13 +26,14 @@ public class AdminController {
     @Autowired
     AdminUtil adminUtil;
 
-    @PostMapping("wallet/fund/{serial}/{userId}")
+    @PostMapping("/wallet/fund/{serial}/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> fundUserWallet(@PathVariable("serial") String serial,
                                                               @PathVariable("userId") Long userId) {
-        Optional<FundWalletDTO> optional = Optional.ofNullable(adminUtil.getTransactions().get(serial));
-        FundWalletDTO fundWalletDTO = optional.orElseThrow(() -> new CustomException("URI is invalid, please redo the process.", HttpStatus.BAD_REQUEST));
+        Optional<WalletTransactionDTO> optional = Optional.ofNullable(adminUtil.getTransactions().get(serial));
+        WalletTransactionDTO walletTransactionDTO = optional.orElseThrow(
+                () -> new CustomException("URI is invalid, please redo the process.", HttpStatus.BAD_REQUEST));
         adminUtil.getTransactions().remove(serial);
-        return adminService.fundUserWallet(userId, fundWalletDTO);
+        return adminService.fundUserWallet(userId, walletTransactionDTO);
     }
 }

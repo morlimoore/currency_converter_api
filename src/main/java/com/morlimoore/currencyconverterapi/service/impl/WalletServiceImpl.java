@@ -1,7 +1,7 @@
 package com.morlimoore.currencyconverterapi.service.impl;
 
 import com.morlimoore.currencyconverterapi.DTOs.CreateWalletDTO;
-import com.morlimoore.currencyconverterapi.DTOs.FundWalletDTO;
+import com.morlimoore.currencyconverterapi.DTOs.WalletTransactionDTO;
 import com.morlimoore.currencyconverterapi.entities.User;
 import com.morlimoore.currencyconverterapi.entities.Wallet;
 import com.morlimoore.currencyconverterapi.payload.ApiResponse;
@@ -52,11 +52,11 @@ public class WalletServiceImpl implements WalletService {
         return successResponse("Wallet creation was successful");
     }
 
-    public ResponseEntity<ApiResponse<String>> fundWallet(User user, FundWalletDTO fundWalletDTO) {
+    public ResponseEntity<ApiResponse<String>> fundWallet(User user, WalletTransactionDTO walletTransactionDTO) {
         String finalBalance = "";
         String responseMessage = "";
 
-        String givenCurrency = fundWalletDTO.getCurrency();
+        String givenCurrency = walletTransactionDTO.getCurrency();
 
         if (user.getRole().equals(ROLE_NOOB)) {
             Wallet mainWallet = getUserMainWallet(user.getId());
@@ -65,13 +65,13 @@ public class WalletServiceImpl implements WalletService {
 
             //If currency of wallet funding is different from main currency
             if (!givenCurrency.equals(mainCurrency)) {
-                Double rate = currencyApiService.getConversionRate(mainWallet.getCurrency(), fundWalletDTO.getCurrency());
+                Double rate = currencyApiService.getConversionRate(mainWallet.getCurrency(), walletTransactionDTO.getCurrency());
                 logger.info("Convertion rate from " + givenCurrency + " to " + mainCurrency + " = " + rate);
-                mainWallet.setAmount(walletBalance + (long)(fundWalletDTO.getAmount() * rate));
+                mainWallet.setAmount(walletBalance + (long)(walletTransactionDTO.getAmount() * rate));
                 Wallet res = walletRepository.save(mainWallet);
                 finalBalance = mainCurrency + res.getAmount();
             } else {
-                mainWallet.setAmount(walletBalance + fundWalletDTO.getAmount());
+                mainWallet.setAmount(walletBalance + walletTransactionDTO.getAmount());
                 Wallet res = walletRepository.save(mainWallet);
                 finalBalance = mainCurrency + res.getAmount();
             }
@@ -80,12 +80,12 @@ public class WalletServiceImpl implements WalletService {
             //If a wallet exist for the user in that currency
             if (hasWalletInCurrency(givenCurrency, user.getId())) {
                 Wallet wallet = getWalletInCurrency(givenCurrency, user.getId());
-                wallet.setAmount(wallet.getAmount() + fundWalletDTO.getAmount());
+                wallet.setAmount(wallet.getAmount() + walletTransactionDTO.getAmount());
                 Wallet res = walletRepository.save(wallet);
                 finalBalance = givenCurrency + res.getAmount();
             } else {
                 Wallet wallet = new Wallet(givenCurrency);
-                wallet.setAmount(fundWalletDTO.getAmount());
+                wallet.setAmount(walletTransactionDTO.getAmount());
                 wallet.setType(SECONDARY);
                 wallet.setUser(user);
                 Wallet res = walletRepository.save(wallet);
@@ -94,7 +94,7 @@ public class WalletServiceImpl implements WalletService {
             responseMessage = "Funding was successful. Your final balance is ";
         } else if (user.getRole().equals(ROLE_ADMIN)) {
             String serial = adminUtil.generateSerial();
-            adminUtil.getTransactions().put(serial, fundWalletDTO);
+            adminUtil.getTransactions().put(serial, walletTransactionDTO);
             responseMessage = "Dear Admin, visit: 'localhost:8080/api/v1/admin/wallet/fund/" + serial + "/userId'" +
                     " to fund user's account. Replace userId with actual user's Id.";
         }

@@ -1,6 +1,6 @@
 package com.morlimoore.currencyconverterapi.util;
 
-import com.morlimoore.currencyconverterapi.DTOs.FundWalletDTO;
+import com.morlimoore.currencyconverterapi.DTOs.WalletTransactionDTO;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 public class AdminUtil {
 
-    private Map<String, FundWalletDTO> Transactions = new HashMap<>();
+    private Map<String, WalletTransactionDTO> Transactions = new HashMap<>();
 
     public String generateSerial() {
         return UUID.randomUUID().toString();
