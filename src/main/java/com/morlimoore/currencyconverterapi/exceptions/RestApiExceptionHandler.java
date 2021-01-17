@@ -32,6 +32,16 @@ public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
         return createResponse(response);
     }
 
+    @ExceptionHandler({ CustomException.class })
+    public ResponseEntity<ApiResponse> handleCustomException(Exception ex) {
+        ApiResponse response = new ApiResponse();
+        response.setMessage(ex.getLocalizedMessage());
+        response.setStatus(HttpStatus.BAD_REQUEST);
+        return createResponse(response);
+    }
+
+    //DnsNameResolverTimeoutException
+
 //    @ExceptionHandler()
 //    public ResponseEntity<ApiResponse> handleHttpRequestFailureException(Exception ex) {
 //        ApiResponse response = new ApiResponse();
