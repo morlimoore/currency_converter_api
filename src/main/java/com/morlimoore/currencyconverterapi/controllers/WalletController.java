@@ -49,6 +49,16 @@ public class WalletController {
         return walletService.fundWallet(user, walletTransactionDTO);
     }
 
+    @PostMapping("/withdraw")
+    @PreAuthorize("!hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> withdrawWallet(@Valid @RequestBody WalletTransactionDTO walletTransactionDTO,
+                                                              BindingResult result) {
+        if (result.hasErrors())
+            return errorResponse(result.getFieldError().getDefaultMessage());
+        User user = authUtil.getAuthenticatedUser();
+        return walletService.withdrawWallet(user, walletTransactionDTO);
+    }
+
 //    @GetMapping("/currencies")
 //    public CurrencyApiResponse getAvailableCurrencies() {
 //        return currencyApiService.getAvailableCurrencies();

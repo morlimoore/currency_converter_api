@@ -4,6 +4,7 @@ import com.morlimoore.currencyconverterapi.DTOs.CreateWalletDTO;
 import com.morlimoore.currencyconverterapi.DTOs.WalletTransactionDTO;
 import com.morlimoore.currencyconverterapi.entities.User;
 import com.morlimoore.currencyconverterapi.entities.Wallet;
+import com.morlimoore.currencyconverterapi.exceptions.CustomException;
 import com.morlimoore.currencyconverterapi.payload.ApiResponse;
 import com.morlimoore.currencyconverterapi.repositories.WalletRepository;
 import com.morlimoore.currencyconverterapi.service.CurrencyApiService;
@@ -13,6 +14,7 @@ import com.morlimoore.currencyconverterapi.util.AuthUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -102,6 +104,55 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    public ResponseEntity<ApiResponse<String>> withdrawWallet(User user, WalletTransactionDTO walletTransactionDTO) {
+        String finalBalance = "";
+        String responseMessage = "";
+
+        Wallet mainWallet = getUserMainWallet(user.getId());
+        String mainCurrency = mainWallet.getCurrency();
+        String givenCurrency = walletTransactionDTO.getCurrency();
+
+        if (user.getRole().equals(ROLE_NOOB)) {
+
+            //If Noob user does not have wallet in that currency
+            if (!mainCurrency.equals(givenCurrency)) {
+                Double rate = currencyApiService.getConversionRate(mainWallet.getCurrency(), walletTransactionDTO.getCurrency());
+                logger.info("Convertion rate from " + givenCurrency + " to " + mainCurrency + " = " + rate);
+                Long amountToWithdraw = (long) (rate * walletTransactionDTO.getAmount());
+                finalBalance = postWithdrawal(mainWallet, amountToWithdraw);
+            } else {
+                finalBalance = postWithdrawal(mainWallet, walletTransactionDTO.getAmount());
+            }
+
+        } else if (user.getRole().equals(ROLE_ELITE)) {
+            if (hasWalletInCurrency(walletTransactionDTO.getCurrency(), user.getId())) {
+                Wallet wallet = getWalletInCurrency(walletTransactionDTO.getCurrency(), user.getId());
+                finalBalance = postWithdrawal(wallet, walletTransactionDTO.getAmount());
+            } else {
+                Double rate = currencyApiService.getConversionRate(mainWallet.getCurrency(), walletTransactionDTO.getCurrency());
+                logger.info("Convertion rate from " + givenCurrency + " to " + mainCurrency + " = " + rate);
+                Long amountToWithdraw = (long) (rate * walletTransactionDTO.getAmount());
+                finalBalance = postWithdrawal(mainWallet, amountToWithdraw);
+
+            }
+        }
+        responseMessage = "Withdrawal was successful. Your final balance is ";
+        return successResponse(responseMessage + finalBalance);
+    }
+
+    private String postWithdrawal(Wallet wallet, Long amount) {
+        String response = "";
+        if (wallet.getAmount() > amount) {
+            wallet.setAmount(wallet.getAmount() - amount);
+            Wallet res = walletRepository.save(wallet);
+            response = res.getCurrency() + res.getAmount();
+        } else {
+            throw new CustomException("Sorry, you have insufficient balance to withdraw", HttpStatus.BAD_REQUEST);
+        }
+        return response;
+    }
+
+    @Override
     public Boolean isCurrencySupported(String currency) {
         return currencyApiService.getAvailableCurrencies()
                 .getResults()
@@ -126,6 +177,8 @@ public class WalletServiceImpl implements WalletService {
     public Wallet getWalletInCurrency(String currency, Long userId) {
         return walletRepository.getWalletByCurrencyEqualsAndUserIdEquals(currency, userId);
     }
+
+
 
 //    @Override
 //    public Wallet testQuery() {
