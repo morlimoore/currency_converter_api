@@ -15,5 +15,5 @@ server:
 application.jwt.secretKey: jwtsecretkeyjwtsecretkey
 application.jwt.validityPeriod: 86400000
 
-application.fixerApi.accessKey: 3141832914157c531df042d0c15401f9
-application.fixerApi.baseUrl: http://data.fixer.io/api
+application.currencyApi.accessKey: bf6095f2b7454be1ac2d
+application.currencyApi.baseUrl: https://free.currconv.com/api/v7
