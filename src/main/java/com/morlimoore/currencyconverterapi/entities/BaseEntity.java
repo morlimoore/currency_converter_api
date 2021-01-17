@@ -2,6 +2,7 @@ package com.morlimoore.currencyconverterapi.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,4 +21,8 @@ public abstract class BaseEntity implements Serializable {
     @CreationTimestamp
     @Column(nullable = false)
     private Timestamp createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private Timestamp updatedAt;
 }
