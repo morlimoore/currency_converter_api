@@ -1,10 +1,11 @@
 package com.morlimoore.currencyconverterapi.controllers;
 
 import com.morlimoore.currencyconverterapi.DTOs.CreateWalletDTO;
+import com.morlimoore.currencyconverterapi.DTOs.FundWalletDTO;
+import com.morlimoore.currencyconverterapi.entities.User;
 import com.morlimoore.currencyconverterapi.payload.ApiResponse;
-import com.morlimoore.currencyconverterapi.payload.FixerApiResponse;
-import com.morlimoore.currencyconverterapi.service.FixerApiService;
 import com.morlimoore.currencyconverterapi.service.WalletService;
+import com.morlimoore.currencyconverterapi.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +24,8 @@ public class WalletController {
     private WalletService walletService;
 
     @Autowired
-    private FixerApiService fixerApiService;
+    private AuthUtil authUtil;
+
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('ELITE')")
@@ -36,8 +38,24 @@ public class WalletController {
         return walletService.createWallet(createWalletDTO);
     }
 
-//    @GetMapping("currencies")
-//    public FixerApiResponse getAvailableCurrencies() {
-//        return fixerApiService.getAvailableCurrencies();
+    @PostMapping("/fund")
+    public ResponseEntity<ApiResponse<String>> fundWallet(@Valid @RequestBody FundWalletDTO fundWalletDTO,
+                                                          BindingResult result) {
+        if (result.hasErrors())
+            return errorResponse(result.getFieldError().getDefaultMessage());
+        if (!walletService.isCurrencySupported(fundWalletDTO.getCurrency()))
+            return errorResponse("Sorry, selected currency is not available, please select another.");
+        User user = authUtil.getAuthenticatedUser();
+        return walletService.fundWallet(user, fundWalletDTO);
+    }
+
+//    @GetMapping("/currencies")
+//    public CurrencyApiResponse getAvailableCurrencies() {
+//        return currencyApiService.getAvailableCurrencies();
+//    }
+
+//    @GetMapping("/query")
+//    public Wallet testQuery() {
+//        return walletService.testQuery();
 //    }
 }
