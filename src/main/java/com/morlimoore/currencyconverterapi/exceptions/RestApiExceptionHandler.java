@@ -1,6 +1,7 @@
 package com.morlimoore.currencyconverterapi.exceptions;
 
 import com.morlimoore.currencyconverterapi.payload.ApiResponse;
+import io.netty.resolver.dns.DnsNameResolverTimeoutException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.net.NoRouteToHostException;
 
 import static com.morlimoore.currencyconverterapi.util.CreateResponse.createResponse;
 
@@ -40,7 +43,21 @@ public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
         return createResponse(response);
     }
 
-    //DnsNameResolverTimeoutException
+    @ExceptionHandler({ NoRouteToHostException.class })
+    public ResponseEntity<ApiResponse> handleNoRouteToHostException(Exception ex) {
+        ApiResponse response = new ApiResponse();
+        response.setMessage("Please check your internet connection");
+        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        return createResponse(response);
+    }
+
+    @ExceptionHandler({ DnsNameResolverTimeoutException.class })
+    public ResponseEntity<ApiResponse> handleDnsNameResolverTimeoutException(Exception ex) {
+        ApiResponse response = new ApiResponse();
+        response.setMessage("There was an error reaching the server, please try again.");
+        response.setStatus(HttpStatus.SERVICE_UNAVAILABLE);
+        return createResponse(response);
+    }
 
 //    @ExceptionHandler()
 //    public ResponseEntity<ApiResponse> handleHttpRequestFailureException(Exception ex) {
