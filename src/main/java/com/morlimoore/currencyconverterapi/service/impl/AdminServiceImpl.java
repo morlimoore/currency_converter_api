@@ -4,7 +4,9 @@ import com.morlimoore.currencyconverterapi.DTOs.AdminActionsDTO;
 import com.morlimoore.currencyconverterapi.DTOs.WalletTransactionDTO;
 import com.morlimoore.currencyconverterapi.entities.User;
 import com.morlimoore.currencyconverterapi.entities.Wallet;
+import com.morlimoore.currencyconverterapi.entities.WalletFunding;
 import com.morlimoore.currencyconverterapi.payload.ApiResponse;
+import com.morlimoore.currencyconverterapi.repositories.WalletFundingRepository;
 import com.morlimoore.currencyconverterapi.repositories.WalletRepository;
 import com.morlimoore.currencyconverterapi.service.AdminService;
 import com.morlimoore.currencyconverterapi.service.CurrencyApiService;
@@ -35,6 +37,9 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private CurrencyApiService currencyApiService;
 
+    @Autowired
+    private WalletFundingRepository walletFundingRepository;
+
     @Override
     public ResponseEntity<ApiResponse<String>> fundUserWallet(Long userId, WalletTransactionDTO walletTransactionDTO) {
         User user = userService.findUserById(userId);
@@ -57,5 +62,16 @@ public class AdminServiceImpl implements AdminService {
         return successResponse("Main currency changed successfully");
     }
 
-
+    @Override
+    public ResponseEntity<ApiResponse<String>> approveNoobFunding(Long userId) {
+        User user = userService.findUserById(userId);
+        WalletFunding walletFunding = walletFundingRepository.findWalletFundingByUserEqualsAndIsApprovedFalse(user);
+        Wallet userWallet = walletFunding.getWallet();
+        userWallet.setAmount(userWallet.getAmount() + walletFunding.getAmount());
+        Wallet res = walletRepository.save(userWallet);
+        walletFunding.setIsApproved(true);
+        walletFundingRepository.save(walletFunding);
+        return successResponse(user.getUsername() + "'s wallet funding has been approved. " +
+                "Final balance = " + res.getCurrency() + res.getAmount());
+    }
 }

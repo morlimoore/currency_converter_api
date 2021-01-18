@@ -10,4 +10,6 @@ public interface AdminService {
     ResponseEntity<ApiResponse<String>> fundUserWallet(Long userId, WalletTransactionDTO walletTransactionDTO);
 
     ResponseEntity<ApiResponse<String>> changeMainCurrency(Long userId, AdminActionsDTO adminActionsDTO);
+
+    ResponseEntity<ApiResponse<String>> approveNoobFunding(Long userId);
 }

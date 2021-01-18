@@ -1,16 +1,20 @@
 package com.morlimoore.currencyconverterapi.service.impl;
 
 import com.morlimoore.currencyconverterapi.DTOs.CreateWalletDTO;
+import com.morlimoore.currencyconverterapi.DTOs.WalletFundingDTO;
 import com.morlimoore.currencyconverterapi.DTOs.WalletTransactionDTO;
 import com.morlimoore.currencyconverterapi.entities.User;
 import com.morlimoore.currencyconverterapi.entities.Wallet;
+import com.morlimoore.currencyconverterapi.entities.WalletFunding;
 import com.morlimoore.currencyconverterapi.exceptions.CustomException;
 import com.morlimoore.currencyconverterapi.payload.ApiResponse;
+import com.morlimoore.currencyconverterapi.repositories.WalletFundingRepository;
 import com.morlimoore.currencyconverterapi.repositories.WalletRepository;
 import com.morlimoore.currencyconverterapi.service.CurrencyApiService;
 import com.morlimoore.currencyconverterapi.service.WalletService;
 import com.morlimoore.currencyconverterapi.util.AdminUtil;
 import com.morlimoore.currencyconverterapi.util.AuthUtil;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,13 @@ public class WalletServiceImpl implements WalletService {
     @Autowired
     private AdminUtil adminUtil;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
+    private WalletFundingRepository walletFundingRepository;
+
+
     @Override
     public ResponseEntity<ApiResponse<String>> createWallet(CreateWalletDTO createWalletDTO) {
         User user = authUtil.getAuthenticatedUser();
@@ -63,22 +74,23 @@ public class WalletServiceImpl implements WalletService {
         if (user.getRole().equals(ROLE_NOOB)) {
             Wallet mainWallet = getUserMainWallet(user.getId());
             String mainCurrency = mainWallet.getCurrency();
-            Long walletBalance = mainWallet.getAmount();
+            WalletFundingDTO walletFundingDTO = new WalletFundingDTO();
+            walletFundingDTO.setWallet(mainWallet);
 
             //If currency of wallet funding is different from main currency
             if (!givenCurrency.equals(mainCurrency)) {
-                Double rate = currencyApiService.getConversionRate(mainWallet.getCurrency(), walletTransactionDTO.getCurrency());
+                Double rate = currencyApiService.getConversionRate(mainCurrency, givenCurrency);
                 logger.info("Convertion rate from " + givenCurrency + " to " + mainCurrency + " = " + rate);
-                mainWallet.setAmount(walletBalance + (long)(walletTransactionDTO.getAmount() * rate));
-                Wallet res = walletRepository.save(mainWallet);
-                finalBalance = mainCurrency + res.getAmount();
+                walletFundingDTO.setAmount((long)(walletTransactionDTO.getAmount() * rate));
             } else {
-                mainWallet.setAmount(walletBalance + walletTransactionDTO.getAmount());
-                Wallet res = walletRepository.save(mainWallet);
-                finalBalance = mainCurrency + res.getAmount();
+                walletFundingDTO.setAmount(walletTransactionDTO.getAmount());
             }
-            responseMessage = "Funding was successful. Your final balance is ";
+            //Todo: Send notification to admin
+            seekAdminApproval(walletFundingDTO);
+            responseMessage = "Your funding request is sent to an admin for approval.";
+
         } else if (user.getRole().equals(ROLE_ELITE)) {
+
             //If a wallet exist for the user in that currency
             if (hasWalletInCurrency(givenCurrency, user.getId())) {
                 Wallet wallet = getWalletInCurrency(givenCurrency, user.getId());
@@ -94,6 +106,7 @@ public class WalletServiceImpl implements WalletService {
                 finalBalance = givenCurrency + res.getAmount();
             }
             responseMessage = "Funding was successful. Your final balance is ";
+
         } else if (user.getRole().equals(ROLE_ADMIN)) {
             String serial = adminUtil.generateSerial();
             adminUtil.getTransactions().put(serial, walletTransactionDTO);
@@ -176,6 +189,13 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public Wallet getWalletInCurrency(String currency, Long userId) {
         return walletRepository.getWalletByCurrencyEqualsAndUserIdEquals(currency, userId);
+    }
+
+    private void seekAdminApproval(WalletFundingDTO walletFundingDTO) {
+        WalletFunding walletFunding = modelMapper.map(walletFundingDTO, WalletFunding.class);
+        walletFunding.setIsApproved(false);
+        walletFunding.setUser(walletFundingDTO.getWallet().getUser());
+        walletFundingRepository.save(walletFunding);
     }
 
 

@@ -49,4 +49,10 @@ public class AdminController {
             return errorResponse("Sorry, selected currency is not available, please select another.");
         return adminService.changeMainCurrency(userId, adminActionsDTO);
     }
+
+    @PostMapping("/wallet/approve-funding/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> approveNoobFunding(@PathVariable("userId") Long userId) {
+        return adminService.approveNoobFunding(userId);
+    }
 }
