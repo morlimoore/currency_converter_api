@@ -8,6 +8,9 @@
 spring:
   profiles:
     active: dev
+  datasource:
+    initialization-mode: always
+    continue-on-error: true
 
 server:
   servlet:
