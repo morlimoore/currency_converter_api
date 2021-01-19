@@ -12,4 +12,6 @@ public interface AdminService {
     ResponseEntity<ApiResponse<String>> changeMainCurrency(Long userId, AdminActionsDTO adminActionsDTO);
 
     ResponseEntity<ApiResponse<String>> approveNoobFunding(Long userId);
+
+    ResponseEntity<ApiResponse<String>> manageUser(Long userId);
 }

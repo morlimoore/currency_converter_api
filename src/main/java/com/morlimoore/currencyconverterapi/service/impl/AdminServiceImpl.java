@@ -74,4 +74,24 @@ public class AdminServiceImpl implements AdminService {
         return successResponse(user.getUsername() + "'s wallet funding has been approved. " +
                 "Final balance = " + res.getCurrency() + res.getAmount());
     }
+
+    @Override
+    public ResponseEntity<ApiResponse<String>> manageUser(Long userId) {
+        String response = "";
+        User user = userService.findUserById(userId);
+        int ordinal = user.getRole().ordinal();
+        RoleEnum newRole;
+        if (ordinal < 2) {
+            if (ordinal == 0)
+                newRole = RoleEnum.values()[ordinal + 1];
+            else
+                newRole = RoleEnum.values()[ordinal - 1];
+            user.setRole(newRole);
+            userRepository.save(user);
+            response = user.getUsername() + " is now " + newRole + ".";
+        } else
+            return errorResponse(user.getUsername() + " is an admin.", BAD_REQUEST);
+
+        return successResponse(response, OK);
+    }
 }

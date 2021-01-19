@@ -55,4 +55,10 @@ public class AdminController {
     public ResponseEntity<ApiResponse<String>> approveNoobFunding(@PathVariable("userId") Long userId) {
         return adminService.approveNoobFunding(userId);
     }
+
+    @PutMapping("/user/manage/promote-demote/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> manageUser(@PathVariable("userId") Long userId) {
+        return adminService.manageUser(userId);
+    }
 }
