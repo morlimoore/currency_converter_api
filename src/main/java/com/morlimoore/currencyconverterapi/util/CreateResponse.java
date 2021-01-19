@@ -10,24 +10,19 @@ public class CreateResponse {
         return new ResponseEntity<>(response, response.getStatus());
     }
 
-    public static ResponseEntity<ApiResponse<String>> errorResponse(String message, HttpStatus status) {
+    public static ResponseEntity<ApiResponse<String>> errorResponse(String result, HttpStatus status) {
         ApiResponse<String> response = new ApiResponse<>();
         response.setStatus(status);
-        response.setMessage(message);
+        response.setMessage("ERROR");
+        response.setResult(result);
         return createResponse(response);
     }
 
-    public static ResponseEntity<ApiResponse<String>> successResponse(String message, HttpStatus status) {
+    public static ResponseEntity<ApiResponse<String>> successResponse(String result, HttpStatus status) {
         ApiResponse<String> response = new ApiResponse<>();
         response.setStatus(status);
-        response.setMessage(message);
-        return createResponse(response);
-    }
-
-    public static ResponseEntity<ApiResponse<String>> exceptionResponse(String message, HttpStatus status) {
-        ApiResponse<String> response = new ApiResponse();
-        response.setMessage(message);
-        response.setStatus(status);
+        response.setMessage("SUCCESS");
+        response.setResult(result);
         return createResponse(response);
     }
 

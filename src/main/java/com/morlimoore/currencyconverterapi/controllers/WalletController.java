@@ -34,9 +34,10 @@ public class WalletController {
                                                             BindingResult result) {
         if (result.hasErrors())
             return errorResponse(result.getFieldError().getDefaultMessage(), BAD_REQUEST);
-        if (!walletService.isCurrencySupported(createWalletDTO.getCurrency()))
+        if (!walletService.isCurrencySupported(createWalletDTO.getCurrency().toUpperCase()))
             return errorResponse("Sorry, selected currency is not available, please select another.", BAD_REQUEST);
-        return walletService.createWallet(createWalletDTO);
+        User user = authUtil.getAuthenticatedUser();
+        return walletService.createWallet(user, createWalletDTO);
     }
 
     @PostMapping("/fund")
@@ -44,7 +45,7 @@ public class WalletController {
                                                           BindingResult result) {
         if (result.hasErrors())
             return errorResponse(result.getFieldError().getDefaultMessage(), BAD_REQUEST);
-        if (!walletService.isCurrencySupported(walletTransactionDTO.getCurrency()))
+        if (!walletService.isCurrencySupported(walletTransactionDTO.getCurrency().toUpperCase()))
             return errorResponse("Sorry, selected currency is not available, please select another.", BAD_REQUEST);
         User user = authUtil.getAuthenticatedUser();
         return walletService.fundWallet(user, walletTransactionDTO);

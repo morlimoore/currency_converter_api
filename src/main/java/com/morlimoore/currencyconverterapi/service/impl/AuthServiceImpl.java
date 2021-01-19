@@ -89,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
                 .collect(Collectors.toList()).get(0);
         ApiResponse<JwtResponse> response = new ApiResponse<>();
         response.setStatus(OK);
-        response.setMessage("Successful");
+        response.setMessage("SUCCESS");
         response.setResult(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),

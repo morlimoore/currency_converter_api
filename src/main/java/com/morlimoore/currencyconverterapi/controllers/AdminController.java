@@ -46,7 +46,7 @@ public class AdminController {
         return adminService.fundUserWallet(userId, walletTransactionDTO);
     }
 
-    @PostMapping("/wallet/currency-change/{userId}")
+    @PutMapping("/wallet/currency-change/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> changeMainCurrency(@PathVariable("userId") Long userId,
                                                                   @RequestBody AdminActionsDTO adminActionsDTO) {
@@ -55,7 +55,7 @@ public class AdminController {
         return adminService.changeMainCurrency(userId, adminActionsDTO);
     }
 
-    @PostMapping("/wallet/approve-funding/{userId}")
+    @PutMapping("/wallet/approve-funding/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> approveNoobFunding(@PathVariable("userId") Long userId) {
         return adminService.approveNoobFunding(userId);

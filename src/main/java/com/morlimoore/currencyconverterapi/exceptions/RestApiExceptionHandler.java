@@ -15,44 +15,43 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.net.NoRouteToHostException;
 
-import static com.morlimoore.currencyconverterapi.util.CreateResponse.createResponse;
-import static com.morlimoore.currencyconverterapi.util.CreateResponse.exceptionResponse;
+import static com.morlimoore.currencyconverterapi.util.CreateResponse.*;
 
 @ControllerAdvice
 public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ AccessDeniedException.class })
     public ResponseEntity<ApiResponse<String>> handleAccessDeniedException(Exception ex) {
-        return exceptionResponse("Sorry, you are not authorised to access this resource.",
+        return errorResponse("Sorry, you are not authorised to access this resource.",
                 HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler({ IllegalStateException.class })
     public ResponseEntity<ApiResponse<String>> handleIllegalStateException(Exception ex) {
-        return exceptionResponse("Transaction failed. Please try again later.",
+        return errorResponse("Transaction failed. Please try again later.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({ CustomException.class })
     public ResponseEntity<ApiResponse<String>> handleCustomException(Exception ex) {
-       return exceptionResponse(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
+       return errorResponse(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ NoRouteToHostException.class })
     public ResponseEntity<ApiResponse<String>> handleNoRouteToHostException(Exception ex) {
-        return exceptionResponse("Error reaching server. Please check your internet connection",
+        return errorResponse("Error reaching server. Please check your internet connection",
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({ DnsNameResolverTimeoutException.class })
     public ResponseEntity<ApiResponse<String>> handleDnsNameResolverTimeoutException(Exception ex) {
-        return exceptionResponse("There was an error reaching the server, please try again.",
+        return errorResponse("There was an error reaching the server, please try again.",
                 HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler({ BadCredentialsException.class })
     public ResponseEntity<ApiResponse<String>> handleBadCredentialsException(Exception ex) {
-        return exceptionResponse("Username or password is invalid. Check and try again",
+        return errorResponse("Username or password is invalid. Check and try again",
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -71,8 +70,9 @@ public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpStatus status,
                                                                   WebRequest request) {
         ApiResponse response = new ApiResponse();
-        response.setMessage("Please provide a request body.");
+        response.setMessage("ERROR");
         response.setStatus(HttpStatus.BAD_REQUEST);
+        response.setResult("Please provide a request body.");
         return createResponse(response);
     }
 }

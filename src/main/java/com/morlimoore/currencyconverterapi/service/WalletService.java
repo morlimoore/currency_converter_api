@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface WalletService {
 
-    ResponseEntity<ApiResponse<String>> createWallet(CreateWalletDTO createWalletDTO);
+    ResponseEntity<ApiResponse<String>> createWallet(User user, CreateWalletDTO createWalletDTO);
 
     ResponseEntity<ApiResponse<String>> fundWallet(User user, WalletTransactionDTO walletTransactionDTO);
 

@@ -56,15 +56,8 @@ public class WalletServiceImpl implements WalletService {
 
 
     @Override
-    public ResponseEntity<ApiResponse<String>> createWallet(CreateWalletDTO createWalletDTO) {
-        User user = authUtil.getAuthenticatedUser();
-        Wallet wallet = new Wallet();
-        wallet.setCurrency(createWalletDTO.getCurrency().toUpperCase());
-        wallet.setType(SECONDARY);
-        wallet.setAmount(0L);
-        wallet.setUser(user);
-        walletRepository.save(wallet);
-        return successResponse("Wallet creation was successful", CREATED);
+    public ResponseEntity<ApiResponse<String>> createWallet(User user, CreateWalletDTO createWalletDTO) {
+        return safeWalletOp(createWalletDTO.getCurrency().toUpperCase(), user, 0L);
     }
 
     public ResponseEntity<ApiResponse<String>> fundWallet(User user, WalletTransactionDTO walletTransactionDTO) {
@@ -92,23 +85,7 @@ public class WalletServiceImpl implements WalletService {
             responseMessage = "Your funding request is sent to an admin for approval.";
 
         } else if (user.getRole().equals(ROLE_ELITE)) {
-
-            //If a wallet exist for the user in that currency
-            if (hasWalletInCurrency(givenCurrency, user.getId())) {
-                Wallet wallet = getWalletInCurrency(givenCurrency, user.getId());
-                wallet.setAmount(wallet.getAmount() + walletTransactionDTO.getAmount());
-                Wallet res = walletRepository.save(wallet);
-                finalBalance = givenCurrency + res.getAmount();
-            } else {
-                Wallet wallet = new Wallet(givenCurrency);
-                wallet.setAmount(walletTransactionDTO.getAmount());
-                wallet.setType(SECONDARY);
-                wallet.setUser(user);
-                Wallet res = walletRepository.save(wallet);
-                finalBalance = givenCurrency + res.getAmount();
-            }
-            responseMessage = "Funding was successful. Your final balance is ";
-
+            return safeWalletOp(givenCurrency, user, walletTransactionDTO.getAmount());
         } else if (user.getRole().equals(ROLE_ADMIN)) {
             String serial = adminUtil.generateSerial();
             adminUtil.getTransactions().put(serial, walletTransactionDTO);
@@ -125,7 +102,7 @@ public class WalletServiceImpl implements WalletService {
 
         Wallet mainWallet = getUserMainWallet(user.getId());
         String mainCurrency = mainWallet.getCurrency();
-        String givenCurrency = walletTransactionDTO.getCurrency();
+        String givenCurrency = walletTransactionDTO.getCurrency().toUpperCase();
 
         if (user.getRole().equals(ROLE_NOOB)) {
 
@@ -198,5 +175,28 @@ public class WalletServiceImpl implements WalletService {
         walletFunding.setIsApproved(false);
         walletFunding.setUser(walletFundingDTO.getWallet().getUser());
         walletFundingRepository.save(walletFunding);
+    }
+
+    private ResponseEntity<ApiResponse<String>> safeWalletOp(String currency, User user, Long amount) {
+        Long balance = null;
+        HttpStatus status = OK;
+        currency = currency.toUpperCase();
+
+        //If a wallet exist for the user in that currency
+        if (hasWalletInCurrency(currency, user.getId())) {
+            Wallet wallet = getWalletInCurrency(currency, user.getId());
+            wallet.setAmount(wallet.getAmount() + amount);
+            Wallet res = walletRepository.save(wallet);
+            balance = res.getAmount();
+        } else {
+            Wallet wallet = new Wallet(currency);
+            wallet.setAmount(amount);
+            wallet.setType(SECONDARY);
+            wallet.setUser(user);
+            Wallet res = walletRepository.save(wallet);
+            balance = res.getAmount();
+            status = CREATED;
+        }
+        return successResponse(currency + " Wallet Balance: " + currency + balance, status);
     }
 }
