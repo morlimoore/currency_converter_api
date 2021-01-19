@@ -1,0 +1,1 @@
+INSERT INTO users VALUES ('1', '2021-01-16 10:46:24', '2021-01-16 10:46:24', 'admin@gmail.com', '$2a$10$w1aSrT2IEkiEk1ex6kun0OUAaiPTC64IXhDcucvi6Y6A4SlTqK48y', 'ROLE_ADMIN', 'admin');
