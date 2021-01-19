@@ -22,4 +22,11 @@ public class UserServiceImpl implements UserService {
         User user = optional.orElseThrow(() -> new CustomException("User does not exist", HttpStatus.BAD_REQUEST));
         return user;
     }
+
+    @Override
+    public User findUserByUsername(String username) {
+        Optional<User> optional = userRepository.findByUsername(username);
+        User user = optional.orElseThrow(() -> new CustomException("User does not exist", HttpStatus.BAD_REQUEST));
+        return user;
+    }
 }
