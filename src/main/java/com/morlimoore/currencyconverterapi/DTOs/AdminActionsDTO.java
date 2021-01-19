@@ -6,4 +6,5 @@ import lombok.Data;
 public class AdminActionsDTO {
 
     private String targetCurrency;
+    private String serial;
 }
