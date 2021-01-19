@@ -6,12 +6,14 @@ import com.morlimoore.currencyconverterapi.entities.User;
 import com.morlimoore.currencyconverterapi.entities.Wallet;
 import com.morlimoore.currencyconverterapi.entities.WalletFunding;
 import com.morlimoore.currencyconverterapi.payload.ApiResponse;
+import com.morlimoore.currencyconverterapi.repositories.UserRepository;
 import com.morlimoore.currencyconverterapi.repositories.WalletFundingRepository;
 import com.morlimoore.currencyconverterapi.repositories.WalletRepository;
 import com.morlimoore.currencyconverterapi.service.AdminService;
 import com.morlimoore.currencyconverterapi.service.CurrencyApiService;
 import com.morlimoore.currencyconverterapi.service.UserService;
 import com.morlimoore.currencyconverterapi.service.WalletService;
+import com.morlimoore.currencyconverterapi.util.RoleEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import static com.morlimoore.currencyconverterapi.util.CreateResponse.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -27,6 +31,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private WalletService walletService;
@@ -53,13 +60,13 @@ public class AdminServiceImpl implements AdminService {
         String existingCurrency = mainWallet.getCurrency();
         String finalCurrency = adminActionsDTO.getTargetCurrency();
         if (finalCurrency.equals(existingCurrency))
-            return errorResponse("Currency already user's main");
+            return errorResponse("Currency already user's main", BAD_REQUEST);
         Double rate = currencyApiService.getConversionRate(finalCurrency, existingCurrency);
         logger.info("Conversion rate from " + existingCurrency + " to " + finalCurrency + " = " + rate);
         mainWallet.setAmount((long)(rate * mainWallet.getAmount()));
         mainWallet.setCurrency(finalCurrency);
         walletRepository.save(mainWallet);
-        return successResponse("Main currency changed successfully");
+        return successResponse("Main currency changed successfully", OK);
     }
 
     @Override
@@ -72,7 +79,7 @@ public class AdminServiceImpl implements AdminService {
         walletFunding.setIsApproved(true);
         walletFundingRepository.save(walletFunding);
         return successResponse(user.getUsername() + "'s wallet funding has been approved. " +
-                "Final balance = " + res.getCurrency() + res.getAmount());
+                "Final balance = " + res.getCurrency() + res.getAmount(), OK);
     }
 
     @Override

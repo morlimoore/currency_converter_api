@@ -28,6 +28,8 @@ import static com.morlimoore.currencyconverterapi.util.CreateResponse.successRes
 import static com.morlimoore.currencyconverterapi.util.RoleEnum.*;
 import static com.morlimoore.currencyconverterapi.util.WalletEnum.MAIN;
 import static com.morlimoore.currencyconverterapi.util.WalletEnum.SECONDARY;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @Service
 public class WalletServiceImpl implements WalletService {
@@ -62,7 +64,7 @@ public class WalletServiceImpl implements WalletService {
         wallet.setAmount(0L);
         wallet.setUser(user);
         walletRepository.save(wallet);
-        return successResponse("Wallet creation was successful");
+        return successResponse("Wallet creation was successful", CREATED);
     }
 
     public ResponseEntity<ApiResponse<String>> fundWallet(User user, WalletTransactionDTO walletTransactionDTO) {
@@ -113,7 +115,7 @@ public class WalletServiceImpl implements WalletService {
             responseMessage = "Dear Admin, visit: 'localhost:8080/api/v1/admin/wallet/fund/" + serial + "/userId'" +
                     " to fund user's account. Replace userId with actual user's Id.";
         }
-        return successResponse(responseMessage + finalBalance);
+        return successResponse(responseMessage + finalBalance, OK);
     }
 
     @Override
@@ -150,7 +152,7 @@ public class WalletServiceImpl implements WalletService {
             }
         }
         responseMessage = "Withdrawal was successful. Your final balance is ";
-        return successResponse(responseMessage + finalBalance);
+        return successResponse(responseMessage + finalBalance, OK);
     }
 
     private String postWithdrawal(Wallet wallet, Long amount) {
@@ -197,12 +199,4 @@ public class WalletServiceImpl implements WalletService {
         walletFunding.setUser(walletFundingDTO.getWallet().getUser());
         walletFundingRepository.save(walletFunding);
     }
-
-
-
-//    @Override
-//    public Wallet testQuery() {
-////        return walletRepository.getWalletByCurrencyEqualsAndUserIdEquals("USD", 2L);
-////        return walletRepository.getUserMainWallet(1L);
-//    }
 }

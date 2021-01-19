@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import static com.morlimoore.currencyconverterapi.util.CreateResponse.errorResponse;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestController
 @RequestMapping("/wallet")
@@ -32,9 +33,9 @@ public class WalletController {
     public ResponseEntity<ApiResponse<String>> createWallet(@Valid @RequestBody CreateWalletDTO createWalletDTO,
                                                             BindingResult result) {
         if (result.hasErrors())
-            return errorResponse(result.getFieldError().getDefaultMessage());
+            return errorResponse(result.getFieldError().getDefaultMessage(), BAD_REQUEST);
         if (!walletService.isCurrencySupported(createWalletDTO.getCurrency()))
-            return errorResponse("Sorry, selected currency is not available, please select another.");
+            return errorResponse("Sorry, selected currency is not available, please select another.", BAD_REQUEST);
         return walletService.createWallet(createWalletDTO);
     }
 
@@ -42,9 +43,9 @@ public class WalletController {
     public ResponseEntity<ApiResponse<String>> fundWallet(@Valid @RequestBody WalletTransactionDTO walletTransactionDTO,
                                                           BindingResult result) {
         if (result.hasErrors())
-            return errorResponse(result.getFieldError().getDefaultMessage());
+            return errorResponse(result.getFieldError().getDefaultMessage(), BAD_REQUEST);
         if (!walletService.isCurrencySupported(walletTransactionDTO.getCurrency()))
-            return errorResponse("Sorry, selected currency is not available, please select another.");
+            return errorResponse("Sorry, selected currency is not available, please select another.", BAD_REQUEST);
         User user = authUtil.getAuthenticatedUser();
         return walletService.fundWallet(user, walletTransactionDTO);
     }
@@ -54,18 +55,8 @@ public class WalletController {
     public ResponseEntity<ApiResponse<String>> withdrawWallet(@Valid @RequestBody WalletTransactionDTO walletTransactionDTO,
                                                               BindingResult result) {
         if (result.hasErrors())
-            return errorResponse(result.getFieldError().getDefaultMessage());
+            return errorResponse(result.getFieldError().getDefaultMessage(),BAD_REQUEST);
         User user = authUtil.getAuthenticatedUser();
         return walletService.withdrawWallet(user, walletTransactionDTO);
     }
-
-//    @GetMapping("/currencies")
-//    public CurrencyApiResponse getAvailableCurrencies() {
-//        return currencyApiService.getAvailableCurrencies();
-//    }
-
-//    @GetMapping("/query")
-//    public Wallet testQuery() {
-//        return walletService.testQuery();
-//    }
 }

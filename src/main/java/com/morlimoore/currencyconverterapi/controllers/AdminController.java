@@ -30,13 +30,18 @@ public class AdminController {
     @Autowired
     AdminUtil adminUtil;
 
-    @PostMapping("/wallet/fund/{serial}/{userId}")
+    @PostMapping("/wallet/fund/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<String>> fundUserWallet(@PathVariable("serial") String serial,
-                                                              @PathVariable("userId") Long userId) {
-        Optional<WalletTransactionDTO> optional = Optional.ofNullable(adminUtil.getTransactions().get(serial));
-        WalletTransactionDTO walletTransactionDTO = optional.orElseThrow(
-                () -> new CustomException("URI is invalid, please redo the process.", HttpStatus.BAD_REQUEST));
+    public ResponseEntity<ApiResponse<String>> fundUserWallet(@PathVariable("userId") Long userId,
+                                                              @RequestBody AdminActionsDTO adminActionsDTO) {
+        Optional<String> optional1 = Optional.ofNullable(adminActionsDTO.getSerial());
+        String serial = optional1.orElseThrow(
+                () -> new CustomException("Please provide the required serial.", HttpStatus.BAD_REQUEST));
+
+        Optional<WalletTransactionDTO> optional2 = Optional.ofNullable(adminUtil.getTransactions().get(serial));
+        WalletTransactionDTO walletTransactionDTO = optional2.orElseThrow(
+                () -> new CustomException("Serial is invalid, please redo the process.", HttpStatus.BAD_REQUEST));
+
         adminUtil.getTransactions().remove(serial);
         return adminService.fundUserWallet(userId, walletTransactionDTO);
     }
@@ -46,7 +51,7 @@ public class AdminController {
     public ResponseEntity<ApiResponse<String>> changeMainCurrency(@PathVariable("userId") Long userId,
                                                                   @RequestBody AdminActionsDTO adminActionsDTO) {
         if (!walletService.isCurrencySupported(adminActionsDTO.getTargetCurrency()))
-            return errorResponse("Sorry, selected currency is not available, please select another.");
+            return errorResponse("Sorry, selected currency is not available, please select another.", HttpStatus.BAD_REQUEST);
         return adminService.changeMainCurrency(userId, adminActionsDTO);
     }
 

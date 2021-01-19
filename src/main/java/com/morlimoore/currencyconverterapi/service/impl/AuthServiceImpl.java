@@ -27,6 +27,7 @@ import static com.morlimoore.currencyconverterapi.util.CreateResponse.createResp
 import static com.morlimoore.currencyconverterapi.util.CreateResponse.successResponse;
 import static com.morlimoore.currencyconverterapi.util.RoleEnum.*;
 import static com.morlimoore.currencyconverterapi.util.WalletEnum.MAIN;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @Service
@@ -71,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
         wallet.setType(MAIN);
         wallet.setAmount(0L);
         walletRepository.save(wallet);
-        return successResponse("User Registration Successful");
+        return successResponse("User Registration Successful", CREATED);
     }
 
     @Override
