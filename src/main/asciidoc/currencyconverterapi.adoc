@@ -1,0 +1,254 @@
+= Currency Converter API project
+:author: Ikenna Echendu
+:email: echendu.vi@gmail.com
+Morlimoore;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+
+[[overview]]
+= Overview
+
+[[overview-http-verbs]]
+== HTTP verbs
+
+Currency Converter API adheres closely as possible to standard HTTP and REST conventions in its
+use of HTTP verbs.
+
+|===
+| Verb | Usage
+
+| `GET`
+| Used to retrieve a resource
+
+| `POST`
+| Used to create a new resource
+
+| `PUT`
+| Used to update an existing resource, including partial updates
+
+|===
+
+RESTful notes tries to adhere as closely as possible to standard HTTP and REST conventions in its
+use of HTTP status codes.
+
+|===
+| Status code | Usage
+
+| `200 OK`
+| The request completed successfully
+
+| `201 Created`
+| A new resource has been created successfully. The resource's URI is available from the response's
+`Location` header
+
+| `204 No Content`
+| An update to an existing resource has been applied successfully
+
+| `400 Bad Request`
+| The request was malformed. The response body will include an error providing further information
+
+| `404 Not Found`
+| The requested resource did not exist
+|===
+
+
+[[security]]
+= Testing the authentication
+
+[[security-signup]]
+== User Sign up
+The user must provide all fields for sign up.
+
+==== Request structure
+include::{snippets}/User can sign up/http-request.adoc[]
+
+==== Response body
+include::{snippets}/User can sign up/response-body.adoc[]
+
+
+[[security-signin]]
+== User Sign in
+The user must provide all fields for sign in.
+
+==== Request structure
+include::{snippets}/User can sign in/http-request.adoc[]
+
+==== Response body
+include::{snippets}/User can sign in/response-body.adoc[]
+
+
+[[resources]]
+= Testing the scenarios
+
+[[resources-noob]]
+== The Noob User Test
+The noob user is the basic user level in the API. It has the minimum privileges as according to the specification.
+The scenarios are tested as follows:
+
+[[resources-noob-test]]
+=== Can only have a wallet in a single currency
+A `POST` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Can only have a wallet in a single currency/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Can only have a wallet in a single currency/response-body.adoc[]
+
+
+=== All wallet funding is converted to the main currency
+A `POST` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/All wallet funding is converted to the main currency/http-request.adoc[]
+
+==== Response body
+include::{snippets}/All wallet funding is converted to the main currency/response-body.adoc[]
+
+
+=== All wallet withdrawal is converted to the main currency
+A `POST` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/All wallet withdrawal is converted to the main currency/http-request.adoc[]
+
+==== Response body
+include::{snippets}/All wallet withdrawal is converted to the main currency/response-body.adoc[]
+
+
+=== All wallet funding needs admin approval
+A `POST` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/All wallet funding needs admin approval/http-request.adoc[]
+
+==== Response body
+include::{snippets}/All wallet funding needs admin approval/response-body.adoc[]
+
+
+=== Cannot change main currency
+A `PUT` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Cannot change main currency/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Cannot change main currency/response-body.adoc[]
+
+
+[[resources-elite]]
+== The Elite User Test
+The elite user is the intermediate user level in the API. It has more privileges than the noob user
+according to the specification. The scenarios are tested as follows:
+
+[[resources-elite-test]]
+=== Can have multiple wallets in different currencies
+A `POST` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Can have multiple wallets in different currencies/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Can have multiple wallets in different currencies/response-body.adoc[]
+
+
+=== Funding should update or create wallet
+A `POST` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Funding should update or create wallet/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Funding should update or create wallet/response-body.adoc[]
+
+
+=== Withdrawal should reduce wallet balance
+A `POST` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Withdrawal should reduce wallet balance/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Withdrawal should reduce wallet balance/response-body.adoc[]
+
+
+=== Wallet-less currency withdrawal is converted to main currency
+A `POST` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Wallet-less currency withdrawal is converted to main currency/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Wallet-less currency withdrawal is converted to main currency/response-body.adoc[]
+
+
+=== Cannot change main currency
+A `PUT` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Cannot change main currency/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Cannot change main currency/response-body.adoc[]
+
+
+
+[[resources-admin]]
+== The Admin User Test
+The admin user is the advanced user level in the API. It has the highest priveleges as according to the specification.
+The scenarios are tested as follows:
+
+[[resources-admin-test]]
+=== Cannot have a wallet
+A `POST` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Cannot have a wallet/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Cannot have a wallet/response-body.adoc[]
+
+
+=== Can fund wallet for any user
+A `POST` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Can fund wallet for any user/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Can fund wallet for any user/response-body.adoc[]
+
+
+=== Can change main currency of any user
+A `PUT` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Can change main currency of any user/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Can change main currency of any user/response-body.adoc[]
+
+
+=== Can approve noob wallet funding
+A `PUT` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Can approve noob wallet funding/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Can approve noob wallet funding/response-body.adoc[]
+
+
+=== Can promote or demote users
+A `PUT` request is used to access the resource.
+
+==== Request structure
+include::{snippets}/Can promote or demote users/http-request.adoc[]
+
+==== Response body
+include::{snippets}/Can promote or demote users/response-body.adoc[]
