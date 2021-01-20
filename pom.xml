@@ -144,8 +144,8 @@
 
 				<executions>
 					<execution>
-						<id>output-html</id>
-						<phase>generate-resources</phase>
+						<id>generate-docs</id>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>process-asciidoc</goal>
 						</goals>
