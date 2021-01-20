@@ -1,0 +1,37 @@
+version: "3.7"
+
+# Define services
+services:
+  # Database Service (PostgresSQL)
+  dockerpostgres:
+    image: postgres:13-alpine
+    ports:
+      - 5432
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - currencyconverterapi-data:/var/lib/postgresql/data
+
+  # App backend service
+  currencyconverterapi:
+    build:
+      context: . # Use an image built from the specified dockerfile in the app directory.
+      dockerfile: Dockerfile
+    image: currencyconverterapi:v1
+    ports:
+      - 8080:8080 # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    depends_on:
+      - dockerpostgres # This service depends on dockerpostgres. Start that first.
+    environment: # Pass environment variables to the service
+      DB_HOST: dockerpostgres
+      DB_NAME: ${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+
+volumes:
+  currencyconverterapi-data:
+    driver: local

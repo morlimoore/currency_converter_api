@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:currencyconverter_db}
+    username: ${SPRING_DATASOURCE_USERNAME:Morlimoore}
+    password: ${SPRING_DATASOURCE_PASSWORD:vikkidchamp}
+    driverClassName: org.postgresql.Driver
+  jpa:
+    generate-ddl: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
