@@ -1,4 +1,4 @@
-name: Currency Converter API Project CI/CD with Maven
+name: Currency-Converter-API
 
 on:
   push:
