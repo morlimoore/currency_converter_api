@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.morlimoore</groupId>
 	<artifactId>currencyconverterapi</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>v1</version>
 	<name>currencyconverterapi</name>
 	<description>Currency converter API project built with Spring Boot</description>
 
