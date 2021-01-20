@@ -55,13 +55,10 @@ public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler()
-//    public ResponseEntity<ApiResponse> handleHttpRequestFailureException(Exception ex) {
-//        ApiResponse response = new ApiResponse();
-//        response.setMessage(ex.getMessage());
-//        response.setStatus(HttpStatus.BAD_REQUEST);
-//        return createResponse(response);
-//    }
+    @ExceptionHandler({ NullPointerException.class })
+    public ResponseEntity<ApiResponse<String>> handleNullPointerException(Exception ex) {
+        return errorResponse("An error occurred. Please try again.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 
     @Override
