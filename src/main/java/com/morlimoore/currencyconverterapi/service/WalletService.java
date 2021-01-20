@@ -23,6 +23,4 @@ public interface WalletService {
 
     Wallet getWalletInCurrency(String currency, Long userId);
 
-
-//    Wallet testQuery();
 }
