@@ -1,0 +1,1 @@
+[![Currency-Converter-API Actions Status](https://github.com/morlimoore/currency_converter_api/workflows/Currency-Converter-API/badge.svg)](https://github.com/morlimoore/currency_converter_api/actions)
