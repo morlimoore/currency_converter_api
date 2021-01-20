@@ -4,7 +4,7 @@
 Integration Testing was done on the project using the RestAssured library.
 
 API documentation was done using Spring Rest Docs and Asciidocs.
-You can view the documentation [here](http://localhost:63342/currencyconverterapi/target/generated-docs/currencyconverterapi.html?_ijt=7v6pa6npogi0a42hmvcpakhnln).
+You can view the documentation [here](https://github.com/morlimoore/currency_converter_api/tree/master/src/main/resources/static/docs.html).
 
 Integration Testing with RestAssured was used, so as to test the entire logic of the application, rather than mocking the web service layer.
 Combining this with Spring Rest Doc and Asciidoc, enabled me to generate documentation dynamically, based of real calls the application.
@@ -24,4 +24,6 @@ To run the project:
  2. Using your terminal, navigate to the root of the project directory.
  
  3. To run the project on Docker, use: **docker-compose -f docker-compose.yml up**
+ 
+ **NOTE:** You must have internet connection for you to be able to run this app successfully.
 
