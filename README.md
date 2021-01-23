@@ -5,6 +5,14 @@
 
 This application derives its exchange rates from [currency converter api](https://www.currencyconverterapi.com/), by making real time calls to the API.
 
+You can access this application on Heroku via this URL: `https://currency-converter-api-v1.herokuapp.com`
+
+NOTE: I did not set up any cron-job to keep the application alive on Heroku. If the first request you send fails, please send another.
+
+The documentation can be viewed [here](https://currency-converter-api-v1.herokuapp.com/api/v1/docs.html).
+
+Please, be sure to replace the *localhost* stated in the URIs in the documentation, with the Heroku URL pasted above.
+
 ### Supported Currencies
 
 This API only supports a certain list of currencies. They are:
@@ -183,12 +191,6 @@ The application is already seeded with an admin user with username `admin` and p
 To successfully send calls to the API, be sure to for each request, include in the header, the token gotten after sign in, as authorization bearer token.
 
 Integration Testing was done on the project using the RestAssured library, while Spring Rest Docs and Asciidocs was used for the API documentation.
-
-We you run the project on the IntelliJ IDE, you can view the documentation by clicking [here](http://localhost:63342/currencyconverterapi/target/generated-docs/currencyconverterapi.html?_ijt=7v6pa6npogi0a42hmvcpakhnln).
-This would only be served on your local host.
-
-You can access the documentation file in the application, by navigating to `src -> main -> resources -> static -> docs.html`
-Then launch the file on your web browser.
 
 Integration Testing with RestAssured was used, to test the entire logic of the application, rather than mocking the web service layer.
 Combining this with Spring Rest Doc and Asciidoc, enabled me to generate documentation dynamically, based of real calls to the application.
