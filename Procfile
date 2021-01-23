@@ -1,0 +1,1 @@
+web: java -jar target/currencyconverterapi-v1.jar
